@@ -1,19 +1,21 @@
-import React from "react";
-import Navbar from "./components/Navbar"; 
-import SignInPoup from "./components/SignInPopup";
+import { useState } from "react";
+import Navbar from "./components/Navbar";
+import SignInPopup from "./components/SignInPopup";
 import SignUpPopup from "./components/SignUpPopup";
 
-function App() {
+export default function App() {
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
+
   return (
-    <div>
-      <Navbar /> 
-      <h2 className="text-center mt-10 text-2xl">
-        Welcome to AI Interview Platform
-      </h2>
-      <SignInPoup />
-      <SignUpPopup />
+    <div className="min-h-screen bg-gray-100">
+      <Navbar setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />
+      {showSignIn && (
+        <SignInPopup setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />
+      )}
+      {showSignUp && (
+        <SignUpPopup setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />
+      )}
     </div>
   );
 }
-
-export default App;
