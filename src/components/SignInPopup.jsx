@@ -1,11 +1,31 @@
 import { useState } from "react";
+import { supabase } from "../lib/supabase";
 
 export default function SignInPopup({ setShowSignIn, setShowSignUp }) {
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSignIn = async () => {
+    setError("");
+    const { error } = await supabase.auth.signInWithPassword({
+      email: form.email,
+      password: form.password,
+    });
+    if (error) setError(error.message);
+    else window.location.reload();
+  };
+
+  const handleGoogleSignIn = async () => {
+    await supabase.auth.signInWithOAuth({ provider: "google" });
+  };
+
+  const handleGitHubSignIn = async () => {
+    await supabase.auth.signInWithOAuth({ provider: "github" });
   };
 
   const handleClose = () => {
@@ -45,8 +65,27 @@ export default function SignInPopup({ setShowSignIn, setShowSignUp }) {
           </button>
         </div>
 
-        <button className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition">
+        {error && <p className="text-red-500 text-center mb-2">{error}</p>}
+
+        <button
+          onClick={handleSignIn}
+          className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition"
+        >
           Login
+        </button>
+
+        <button
+          onClick={handleGoogleSignIn}
+          className="w-full bg-red-500 text-white p-2 rounded mt-2"
+        >
+          Sign In with Google
+        </button>
+
+        <button
+          onClick={handleGitHubSignIn}
+          className="w-full bg-gray-900 text-white p-2 rounded mt-2"
+        >
+          Sign In with GitHub
         </button>
 
         <p className="text-center text-sm text-gray-600 mt-3">

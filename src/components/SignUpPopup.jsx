@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { supabase } from "../lib/supabase";
 
 export default function SignUpPopup({ setShowSignIn, setShowSignUp }) {
   const [form, setForm] = useState({
@@ -8,11 +9,27 @@ export default function SignUpPopup({ setShowSignIn, setShowSignUp }) {
     password: "",
     confirmPassword: "",
   });
-
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSignUp = async () => {
+    setError("");
+    if (form.password !== form.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    
+    const { error } = await supabase.auth.signUp({
+      email: form.email,
+      password: form.password,
+    });
+    
+    if (error) setError(error.message);
+    else alert("Check your email to verify your account!");
   };
 
   const handleClose = () => {
@@ -70,9 +87,36 @@ export default function SignUpPopup({ setShowSignIn, setShowSignUp }) {
           </button>
         </div>
 
-        <button className="w-full bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition">
+        <input
+          type={showPassword ? "text" : "password"}
+          name="confirmPassword"
+          placeholder="Confirm Password"
+          className="w-full p-3 border rounded-lg mb-3"
+          value={form.confirmPassword}
+          onChange={handleChange}
+        />
+
+        {error && <p className="text-red-500 text-center mb-2">{error}</p>}
+
+        <button
+          onClick={handleSignUp}
+          className="w-full bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition"
+        >
           Register
         </button>
+
+        <p className="text-center text-sm text-gray-600 mt-3">
+          Already have an account? {" "}
+          <span
+            onClick={() => {
+              setShowSignUp(false);
+              setShowSignIn(true);
+            }}
+            className="text-blue-500 cursor-pointer hover:underline"
+          >
+            Sign In
+          </span>
+        </p>
 
         <button
           onClick={handleClose}
