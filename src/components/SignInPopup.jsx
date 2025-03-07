@@ -16,8 +16,14 @@ export default function SignInPopup({ setShowSignIn, setShowSignUp }) {
       email: form.email,
       password: form.password,
     });
-    if (error) setError(error.message);
-    else window.location.reload();
+
+    if (error?.message.includes("Email not confirmed")) {
+      alert("Please verify your email before logging in.");
+    } else if (error) {
+      setError(error.message);
+    } else {
+      window.location.reload();
+    }
   };
 
   const handleGoogleSignIn = async () => {

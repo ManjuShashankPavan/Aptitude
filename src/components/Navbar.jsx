@@ -6,8 +6,9 @@ export default function Navbar({ setShowSignIn, setShowSignUp }) {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUser(data?.user);
+      const { data: { user } } = await supabase.auth.getUser();
+      console.log(user); // Debugging: Log the user data
+      setUser(user);
     };
 
     fetchUser();
