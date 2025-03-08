@@ -42,7 +42,7 @@ export default function SignInPopup({ setShowSignIn, setShowSignUp }) {
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-        <h2 className="text-2xl font-semibold mb-4 text-center">Sign In</h2>
+        <h2 className="text-2xl font-medium mb-4 text-center">Sign In For AI Triney</h2>
 
         <input
           type="email"
@@ -80,6 +80,7 @@ export default function SignInPopup({ setShowSignIn, setShowSignUp }) {
           Login
         </button>
 
+        <div className="flex gap-2 mt-2">
         <button
           onClick={handleGoogleSignIn}
           className="w-full bg-red-500 text-white p-2 rounded mt-2"
@@ -93,6 +94,7 @@ export default function SignInPopup({ setShowSignIn, setShowSignUp }) {
         >
           Sign In with GitHub
         </button>
+        </div>
 
         <p className="text-center text-sm text-gray-600 mt-3">
           Don't have an account?{" "}
