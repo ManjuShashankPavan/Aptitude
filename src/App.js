@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import SignInPopup from "./components/SignInPopup";
 import SignUpPopup from "./components/SignUpPopup";
 import ProtectedPage from "./pages/ProtectedPage";
+import Footer from "./components/Footer";
 
 export default function App() {
   const [showSignIn, setShowSignIn] = useState(false);
@@ -27,6 +28,7 @@ export default function App() {
           <SignUpPopup setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />
         )}
       </div>
+      <Footer />
     </Router>
   );
 }
