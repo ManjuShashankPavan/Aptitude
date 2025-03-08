@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 
 export default function Navbar({ setShowSignIn, setShowSignUp }) {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate(); // For navigation
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -26,26 +28,39 @@ export default function Navbar({ setShowSignIn, setShowSignUp }) {
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
+    navigate("/"); // Redirect to home after logout
+  };
+
+  const handleDashboardClick = () => {
+    if (user) {
+      navigate("/dashboard"); // ✅ Navigate to dashboard if user is signed in
+    } else {
+      setShowSignIn(true); // ✅ Show sign-in popup if user is not signed in
+    }
   };
 
   return (
-    <nav className="bg-blue-600  p-4 shadow-md">
+    <nav className="fixed top-0 left-0 w-full z-30 bg-blue-600 p-2 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
         {/* Logo */}
-        <a href="/">
+        <Link to="/">
           <img src="/SpeaQ.png" alt="SpeaQ Logo" className="h-10" />
-        </a>
+        </Link>
 
         {/* Navigation Links */}
         <ul className="flex space-x-6 items-center">
           <li>
-            <a href="/" className="text-white hover:underline">Home</a>
+            <Link to="/" className="text-white hover:underline">Home</Link>
           </li>
+
+          {/* Dashboard Button - Click to check login status */}
           <li>
-            <a href="#" className="text-white hover:underline">About</a>
-          </li>
-          <li>
-            <a href="#" className="text-white hover:underline">Contact</a>
+            <button
+              onClick={handleDashboardClick}
+              className="text-white hover:underline"
+            >
+              Dashboard
+            </button>
           </li>
 
           {user ? (

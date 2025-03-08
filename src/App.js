@@ -6,8 +6,11 @@ import SignInPopup from "./components/SignInPopup";
 import SignUpPopup from "./components/SignUpPopup";
 import Dashboard from "./pages/Dashboard";
 import ResumeUpload from "./components/ResumeUpload";
-import IntroPage from "./pages/IntroPage";  // Import IntroPage
-import Footer from "./components/Footer"; // Import Footer
+import IntroPage from "./pages/IntroPage";
+import ContactUs from "./components/ContactUs";
+import Contact from "./components/Contact";
+import About from "./components/About";
+import Footer from "./components/Footer";
 
 export default function App() {
   const [showSignIn, setShowSignIn] = useState(false);
@@ -31,25 +34,36 @@ export default function App() {
 
   return (
     <Router>
-      <div className="min-h-screen flex flex-col">
+      <div className="flex flex-col min-h-screen">
+        {/* ✅ Navbar at the top */}
         <Navbar setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />
 
-        <div className="flex-grow">
+        {/* ✅ Main content must fill the available space */}
+        <div className="flex-grow flex flex-col">
           <Routes>
-            {user ? (
+            {/* ✅ Show IntroPage if user is not logged in */}
+            <Route path="/" element={<IntroPage setShowSignIn={setShowSignIn} />} />
+
+            {/* ✅ Protected Routes for logged-in users */}
+            {user && (
               <>
-                <Route path="/" element={<Dashboard />} />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/upload" element={<ResumeUpload />} />
               </>
-            ) : (
-              // ✅ Pass setShowSignIn to IntroPage
-              <Route path="/" element={<IntroPage setShowSignIn={setShowSignIn} />} />
             )}
+
+            {/* ✅ Contact Pages */}
+            <Route path="/ContactUs" element={<ContactUs />} />
+            <Route path="/Contact" element={<Contact />} />
+            <Route path="/About" element={<About />} />
           </Routes>
+
         </div>
 
-        <Footer /> {/* ✅ Ensure Footer is always displayed */}
+        {/* ✅ Footer should always be at the bottom */}
+        <Footer />
 
+        {/* ✅ Popups for authentication */}
         {showSignIn && (
           <SignInPopup setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />
         )}

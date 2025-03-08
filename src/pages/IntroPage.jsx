@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function IntroPage({ setShowSignIn }) {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+    <div className="flex flex-col items-center justify-center flex-grow min-h-[calc(100vh-80px)] bg-gradient-to-r from-blue-500 to-purple-600 text-white">
       <motion.h1
         className="text-4xl font-bold mb-4"
         initial={{ opacity: 0, y: -20 }}
@@ -29,7 +29,6 @@ export default function IntroPage({ setShowSignIn }) {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1, delay: 1 }}
       >
-        {/* Get Started - Triggers Sign In Popup */}
         <button
           onClick={() => setShowSignIn(true)}
           className="bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-gray-200 transition"
@@ -37,7 +36,6 @@ export default function IntroPage({ setShowSignIn }) {
           Get Started
         </button>
 
-        {/* Learn More - Directs to About Page */}
         <a href="/about">
           <button className="border border-white px-6 py-2 rounded-lg font-semibold hover:bg-white hover:text-blue-600 transition">
             Learn More
