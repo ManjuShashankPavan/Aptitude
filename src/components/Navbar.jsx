@@ -8,7 +8,6 @@ export default function Navbar({ setShowSignIn, setShowSignUp }) {
   useEffect(() => {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      console.log("User Data:", user); // Debugging: Log the user data
       setUser(user);
     };
 
@@ -16,11 +15,9 @@ export default function Navbar({ setShowSignIn, setShowSignUp }) {
 
     // Listen for auth state changes
     const { data: listener } = supabase.auth.onAuthStateChange((_, session) => {
-      console.log("Session Data:", session?.user);
       setUser(session?.user || null);
     });
 
-    // Cleanup the listener on unmount
     return () => {
       listener?.subscription?.unsubscribe();
     };
@@ -31,14 +28,15 @@ export default function Navbar({ setShowSignIn, setShowSignUp }) {
     setUser(null);
   };
 
-  const handleGitHubSignIn = async () => {
-    await supabase.auth.signInWithOAuth({ provider: "github" });
-  };
-
   return (
     <nav className="bg-blue-600 p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-white text-xl font-bold">AI Interview Platform</h1>
+        {/* Logo */}
+        <a href="/">
+          <img src="/SpeaQ.png" alt="SpeaQ Logo" className="h-10" />
+        </a>
+
+        {/* Navigation Links */}
         <ul className="flex space-x-6 items-center">
           <li>
             <a href="/" className="text-white hover:underline">Home</a>
@@ -50,21 +48,13 @@ export default function Navbar({ setShowSignIn, setShowSignUp }) {
             <a href="#" className="text-white hover:underline">Contact</a>
           </li>
 
-          {user?.user_metadata ? (
+          {user ? (
             // User Profile & Logout Dropdown
             <div className="relative">
               <img
-                src={
-                  user?.user_metadata?.avatar_url ||  
-                  user?.user_metadata?.picture ||  
-                  "https://via.placeholder.com/40"
-                }
+                src={user?.user_metadata?.avatar_url || "https://via.placeholder.com/40"}
                 alt="Profile"
                 className="w-10 h-10 rounded-full cursor-pointer border-2 border-white"
-                onError={(e) => {
-                  console.log("Image failed to load:", e.target.src);
-                  e.target.src = "https://via.placeholder.com/40"; // Fallback image
-                }}
                 onClick={() => setShowDropdown(!showDropdown)}
               />
               {showDropdown && (

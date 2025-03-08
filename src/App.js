@@ -1,25 +1,54 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { supabase } from "./lib/supabase";
 import Navbar from "./components/Navbar";
 import SignInPopup from "./components/SignInPopup";
 import SignUpPopup from "./components/SignUpPopup";
-import ProtectedPage from "./pages/ProtectedPage";
-import Footer from "./components/Footer";
+import Dashboard from "./pages/Dashboard";
+import ResumeUpload from "./components/ResumeUpload";
+import IntroPage from "./pages/IntroPage";  // Import IntroPage
+import Footer from "./components/Footer"; // Import Footer
 
 export default function App() {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+
+    fetchUser();
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_, session) => {
+      setUser(session?.user || null);
+    });
+
+    return () => listener?.subscription.unsubscribe();
+  }, []);
 
   return (
     <Router>
-      <div className="min-h-screen bg-gray-100">
+      <div className="min-h-screen flex flex-col">
         <Navbar setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />
 
-        <Routes>
-          <Route path="/" element={<h1 className="text-center text-2xl mt-10">Home Page</h1>} />
-          <Route path="/login" element={<SignInPopup setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />} />
-          <Route path="/protected" element={<ProtectedPage />} />
-        </Routes>
+        <div className="flex-grow">
+          <Routes>
+            {user ? (
+              <>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/upload" element={<ResumeUpload />} />
+              </>
+            ) : (
+              // ✅ Pass setShowSignIn to IntroPage
+              <Route path="/" element={<IntroPage setShowSignIn={setShowSignIn} />} />
+            )}
+          </Routes>
+        </div>
+
+        <Footer /> {/* ✅ Ensure Footer is always displayed */}
 
         {showSignIn && (
           <SignInPopup setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />
@@ -28,7 +57,6 @@ export default function App() {
           <SignUpPopup setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />
         )}
       </div>
-      <Footer />
     </Router>
   );
 }
