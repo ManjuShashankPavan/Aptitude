@@ -2,31 +2,31 @@ import React from "react";
 
 export default function Contact() {
   return (
-    <div className="p-6 max-w-lg mx-auto border rounded-lg shadow-lg mt-20">
-      <h1 className="text-2xl font-bold">Send Message</h1>
+    <div className="p-10 max-w-10xl mx-auto border shadow-lg mt-16 bg-slate-200">
+      <h1 className="text-3xl font-bold text-green-600">Send Message</h1>
 
-      <h4 className="mt-4">Full Name</h4>
+      <h4 className="mt-6">Full Name</h4>
       <input
         type="text"
-        className="w-full p-2 border rounded-md"
-        placeholder="Enter your name"
+        className="w-full p-3 border border-green-500 hover:bg-slate-300 outline-blue-400 rounded-md"
+        placeholder=" "
       />
 
-      <h4 className="mt-4">Email</h4>
+      <h4 className="mt-6">Email</h4>
       <input
         type="email"
-        className="w-full p-2 border rounded-md"
-        placeholder="Enter your email"
+        className="w-full p-3 border border-green-500 hover:bg-slate-300 outline-blue-400 rounded-md"
+        placeholder=" "
       />
 
-      <h4 className="mt-4">Type your Message...</h4>
+      <h4 className="mt-6">Type your Message...</h4>
       <textarea
-        className="w-full p-2 border rounded-md"
-        placeholder="Write your message"
-        rows="4"
+        className="w-full p-3 border border-green-500 hover:bg-slate-300 outline-blue-400 rounded-md"
+        placeholder=" "
+        rows="5"
       ></textarea>
 
-      <button className="bg-blue-600 text-white px-4 py-2 rounded-md mt-4 hover:bg-blue-700">
+      <button className="bg-blue-600 text-white px-6 py-3 rounded-md mt-6 hover:bg-blue-700">
         Send
       </button>
     </div>

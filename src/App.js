@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react"; // ✅ Added useRef
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { supabase } from "./lib/supabase";
 import Navbar from "./components/Navbar";
@@ -10,12 +10,17 @@ import IntroPage from "./pages/IntroPage";
 import ContactUs from "./components/ContactUs";
 import Contact from "./components/Contact";
 import About from "./components/About";
+import FAQs from "./components/FAQs";
+import TandP from "./components/TandP";
+import Support from "./components/Support";
+import Careers from "./components/Careers";
 import Footer from "./components/Footer";
 
 export default function App() {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [user, setUser] = useState(null);
+  const resumeUploadRef = useRef(null); // ✅ Added missing useRef
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -36,7 +41,11 @@ export default function App() {
     <Router>
       <div className="flex flex-col min-h-screen">
         {/* ✅ Navbar at the top */}
-        <Navbar setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />
+        <Navbar 
+          setShowSignIn={setShowSignIn} 
+          setShowSignUp={setShowSignUp}
+          triggerResumeUpload={() => resumeUploadRef.current?.()} // ✅ Now resumeUploadRef is properly defined
+        />
 
         {/* ✅ Main content must fill the available space */}
         <div className="flex-grow flex flex-col">
@@ -48,7 +57,7 @@ export default function App() {
             {user && (
               <>
                 <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/upload" element={<ResumeUpload />} />
+                <Route path="/upload" element={<ResumeUpload resumeUploadRef={resumeUploadRef} />} /> {/* ✅ Passed resumeUploadRef */}
               </>
             )}
 
@@ -56,6 +65,10 @@ export default function App() {
             <Route path="/ContactUs" element={<ContactUs />} />
             <Route path="/Contact" element={<Contact />} />
             <Route path="/About" element={<About />} />
+            <Route path="/FAQs" element={<FAQs />} />
+            <Route path="/TandP" element={<TandP />} />
+            <Route path="/Careers" element={<Careers />} />
+            <Route path="/Support" element={<Support />} />
           </Routes>
 
         </div>

@@ -2,8 +2,8 @@ import React from "react";
 
 export default function About() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6">
-      <div className="max-w-3xl bg-white text-gray-900 p-8 rounded-2xl shadow-lg">
+    <div className="flex flex-col flex-grow items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 mt-10">
+      <div className="max-w-3xl bg-white text-gray-900 p-8 rounded-2xl shadow-lg mt-16">
         <h1 className="text-4xl font-bold text-center mb-4">About Us</h1>
         <p className="text-lg text-center">
           Welcome to <span className="font-semibold text-blue-600">SpeaQ</span>, an innovative AI-powered interview 
@@ -19,8 +19,8 @@ export default function About() {
           </p>
           <ul className="list-disc list-inside mt-3 space-y-2 text-gray-700">
             <li>Provide realistic AI-driven interview simulations.</li>
-            <li> Offer instant feedback on body language, gaze, and responses.</li>
-            <li> Enhance confidence and communication skills for better job success.</li>
+            <li>Offer instant feedback on body language, gaze, and responses.</li>
+            <li>Enhance confidence and communication skills for better job success.</li>
           </ul>
         </div>
 

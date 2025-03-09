@@ -1,11 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../lib/supabase";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 
-export default function Navbar({ setShowSignIn, setShowSignUp }) {
+export default function Navbar({ setShowSignIn, setShowSignUp, triggerResumeUpload }) {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate(); // For navigation
+  const fileInputRef = useRef(null); // Reference for file input
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -39,12 +40,23 @@ export default function Navbar({ setShowSignIn, setShowSignUp }) {
     }
   };
 
+  const handleUploadClick = () => {
+    fileInputRef.current.click(); // ✅ Opens the file selection dialog
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      console.log("Resume uploaded:", file.name);
+      triggerResumeUpload(file); // ✅ Pass file to upload function in Dashboard
+    }
+  };
+
   return (
     <nav className="fixed top-0 left-0 w-full z-30 bg-blue-600 p-2 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
-        {/* Logo */}
-        <Link to="/">
-          <img src="/SpeaQ.png" alt="SpeaQ Logo" className="h-10" />
+        <Link to="/"> 
+          <img src="/SpeaQ.png" alt="SpeaQ Logo" className="h-10 ml-[-20px]" />
         </Link>
 
         {/* Navigation Links */}
@@ -74,6 +86,14 @@ export default function Navbar({ setShowSignIn, setShowSignUp }) {
               />
               {showDropdown && (
                 <div className="absolute right-0 mt-2 w-32 bg-white shadow-lg rounded-lg p-2">
+                  {/* ✅ Fixed "Upload Resume" button */}
+                  <button 
+                    className="w-full text-left px-2 py-2 text-blue-600 hover:bg-gray-100 rounded"
+                    onClick={handleUploadClick} // ✅ Opens file input
+                  >
+                    Upload Resume
+                  </button>
+
                   <button
                     onClick={handleLogout}
                     className="w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 rounded"
@@ -96,6 +116,15 @@ export default function Navbar({ setShowSignIn, setShowSignUp }) {
           )}
         </ul>
       </div>
+
+      {/* ✅ Hidden file input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        className="hidden"
+        onChange={handleFileChange}
+        accept=".pdf,.doc,.docx"
+      />
     </nav>
   );
 }

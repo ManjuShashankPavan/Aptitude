@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 
 export default function IntroPage({ setShowSignIn }) {
   return (
-    <div className="flex flex-col items-center justify-center flex-grow min-h-[calc(100vh-80px)] bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+    <div className="flex flex-col items-center justify-center flex-grow bg-gradient-to-r from-blue-500 to-purple-600 text-white h-screen">
       <motion.h1
         className="text-4xl font-bold mb-4"
         initial={{ opacity: 0, y: -20 }}
