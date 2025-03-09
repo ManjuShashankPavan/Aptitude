@@ -1,24 +1,39 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "../lib/supabase";
-import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Navbar({ setShowSignIn, setShowSignUp, triggerResumeUpload }) {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
-  const navigate = useNavigate(); // For navigation
-  const fileInputRef = useRef(null); // Reference for file input
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
+      if (user) {
+        setUser({
+          email: user.email,
+          firstName: user.user_metadata?.firstName || "User",
+          lastName: user.user_metadata?.lastName || "",
+          avatar: user.user_metadata?.avatar_url || "https://via.placeholder.com/40",
+        });
+      }
     };
 
     fetchUser();
 
-    // Listen for auth state changes
     const { data: listener } = supabase.auth.onAuthStateChange((_, session) => {
-      setUser(session?.user || null);
+      if (session?.user) {
+        setUser({
+          email: session.user.email,
+          firstName: session.user.user_metadata?.firstName || "User",
+          lastName: session.user.user_metadata?.lastName || "",
+          avatar: session.user.user_metadata?.avatar_url || "https://via.placeholder.com/40",
+        });
+      } else {
+        setUser(null);
+      }
     });
 
     return () => {
@@ -29,31 +44,31 @@ export default function Navbar({ setShowSignIn, setShowSignUp, triggerResumeUplo
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
-    navigate("/"); // Redirect to home after logout
+    navigate("/");
   };
 
   const handleDashboardClick = () => {
     if (user) {
-      navigate("/dashboard"); // ✅ Navigate to dashboard if user is signed in
+      navigate("/dashboard");
     } else {
-      setShowSignIn(true); // ✅ Show sign-in popup if user is not signed in
+      setShowSignIn(true);
     }
   };
 
   const handleUploadClick = () => {
-    fileInputRef.current.click(); // ✅ Opens the file selection dialog
+    fileInputRef.current.click();
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       console.log("Resume uploaded:", file.name);
-      triggerResumeUpload(file); // ✅ Pass file to upload function in Dashboard
+      triggerResumeUpload(file);
     }
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-30 bg-blue-600 p-2 shadow-md">
+    <nav className="fixed top-0 left-0 w-full z-30 bg-blue-600 p-3 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
         <Link to="/"> 
           <img src="/SpeaQ.png" alt="SpeaQ Logo" className="h-10 ml-[-20px]" />
@@ -65,7 +80,7 @@ export default function Navbar({ setShowSignIn, setShowSignUp, triggerResumeUplo
             <Link to="/" className="text-white hover:underline">Home</Link>
           </li>
 
-          {/* Dashboard Button - Click to check login status */}
+          {/* Dashboard Button */}
           <li>
             <button
               onClick={handleDashboardClick}
@@ -76,20 +91,22 @@ export default function Navbar({ setShowSignIn, setShowSignUp, triggerResumeUplo
           </li>
 
           {user ? (
-            // User Profile & Logout Dropdown
             <div className="relative">
               <img
-                src={user?.user_metadata?.avatar_url || "https://via.placeholder.com/40"}
+                src={user.avatar}
                 alt="Profile"
                 className="w-10 h-10 rounded-full cursor-pointer border-2 border-white"
                 onClick={() => setShowDropdown(!showDropdown)}
               />
               {showDropdown && (
-                <div className="absolute right-0 mt-2 w-32 bg-white shadow-lg rounded-lg p-2">
-                  {/* ✅ Fixed "Upload Resume" button */}
+                <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg p-2">
+                  <p className="text-center font-semibold text-gray-700">
+                    {user.firstName} {user.lastName}
+                  </p>
+
                   <button 
                     className="w-full text-left px-2 py-2 text-blue-600 hover:bg-gray-100 rounded"
-                    onClick={handleUploadClick} // ✅ Opens file input
+                    onClick={handleUploadClick} 
                   >
                     Upload Resume
                   </button>
@@ -104,7 +121,6 @@ export default function Navbar({ setShowSignIn, setShowSignUp, triggerResumeUplo
               )}
             </div>
           ) : (
-            // Sign In Button
             <li>
               <button
                 onClick={() => setShowSignIn(true)}
@@ -117,7 +133,7 @@ export default function Navbar({ setShowSignIn, setShowSignUp, triggerResumeUplo
         </ul>
       </div>
 
-      {/* ✅ Hidden file input */}
+      {/* Hidden file input */}
       <input
         type="file"
         ref={fileInputRef}

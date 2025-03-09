@@ -12,14 +12,6 @@ export default function ResumeUpload() {
     }
   };
 
-  const triggerFileInput = () => {
-    if (!resumeUploaded) {
-      fileInputRef.current.click();
-    } else {
-      console.log("Starting video interview..."); // Replace this with actual interview logic
-    }
-  };
-
   return (
     <div className="p-4 bg-white rounded-lg shadow-lg w-96 flex justify-center items-center m-9">
       <input
@@ -29,15 +21,17 @@ export default function ResumeUpload() {
         onChange={handleFileChange}
         className="hidden"
       />
-      <button 
-        onClick={triggerFileInput} 
-        disabled={uploading} 
-        className={`w-full text-white p-2 rounded transition ${
-          uploading ? "bg-gray-400 cursor-not-allowed" : resumeUploaded ? "bg-green-500 hover:bg-green-600" : "bg-blue-500 hover:bg-blue-600"
-        }`}
-      >
-        {uploading ? "Uploading..." : resumeUploaded ? "Start Video Interview" : "Upload Resume"}
-      </button>
+      {!resumeUploaded && (
+        <button 
+          onClick={() => fileInputRef.current.click()} 
+          disabled={uploading} 
+          className={`w-full text-white p-2 rounded transition ${
+            uploading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg--600"
+          }`}
+        >
+          {uploading ? "Uploading..." : "Upload Resume"}
+        </button>
+      )}
     </div>
   );
 }

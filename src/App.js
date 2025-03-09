@@ -14,6 +14,9 @@ import FAQs from "./components/FAQs";
 import TandP from "./components/TandP";
 import Support from "./components/Support";
 import Careers from "./components/Careers";
+import Mockinterview from "./components/Mockinterview";
+import Certificate from "./components/Certificate";
+import LearningCourses from "./components/LearningCourses";
 import Footer from "./components/Footer";
 
 export default function App() {
@@ -69,6 +72,9 @@ export default function App() {
             <Route path="/TandP" element={<TandP />} />
             <Route path="/Careers" element={<Careers />} />
             <Route path="/Support" element={<Support />} />
+            <Route path="/Mockinterview" element={<Mockinterview />} />
+            <Route path="/Certificate" element={<Certificate />} />
+            <Route path="/LearningCourses" element={<LearningCourses />} />
           </Routes>
 
         </div>

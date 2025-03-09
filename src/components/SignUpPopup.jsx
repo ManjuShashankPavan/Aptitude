@@ -11,6 +11,7 @@ export default function SignUpPopup({ setShowSignIn, setShowSignUp }) {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -18,16 +19,31 @@ export default function SignUpPopup({ setShowSignIn, setShowSignUp }) {
 
   const handleSignUp = async () => {
     setError("");
+    if (!form.firstName || !form.lastName) {
+      setError("First name and last name are required");
+      return;
+    }
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-    
-    const { error } = await supabase.auth.signUp({
+
+    setLoading(true);
+
+    const { data, error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
+      options: {
+        data: {
+          firstName: form.firstName,
+          lastName: form.lastName,
+          avatar_url: "https://via.placeholder.com/150", // Default avatar URL
+        },
+      },
     });
-    
+
+    setLoading(false);
+
     if (error) setError(error.message);
     else alert("Check your email to verify your account!");
   };
@@ -83,7 +99,7 @@ export default function SignUpPopup({ setShowSignIn, setShowSignUp }) {
             className="absolute right-3 top-3 text-gray-500"
             onClick={() => setShowPassword(!showPassword)}
           >
-            {showPassword ? "🙈" : "👁"}
+            {showPassword ? "👁‍🗨" : "👁"}
           </button>
         </div>
 
@@ -101,12 +117,13 @@ export default function SignUpPopup({ setShowSignIn, setShowSignUp }) {
         <button
           onClick={handleSignUp}
           className="w-full bg-green-500 text-white p-3 rounded-lg hover:bg-green-600 transition"
+          disabled={loading}
         >
-          Register
+          {loading ? "Signing up..." : "Register"}
         </button>
 
         <p className="text-center text-sm text-gray-600 mt-3">
-          Already have an account? {" "}
+          Already have an account?{" "}
           <span
             onClick={() => {
               setShowSignUp(false);
