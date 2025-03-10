@@ -1,4 +1,6 @@
 import React from "react";
+import { useEffect } from 'react';
+
 
 const jobListings = [
   { title: "Frontend Developer", location: " ", type: " " },
@@ -6,6 +8,10 @@ const jobListings = [
 ];
 
 export default function Careers() {
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+    
   return (
     <div className="max-w-4xl mx-auto p-6 mt-10 ">
       <h1 className="text-3xl font-bold text-center text-blue-600 mb-6">

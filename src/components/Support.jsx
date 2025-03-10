@@ -1,6 +1,11 @@
 import React, { useState } from "react";
+import { useEffect } from 'react';
+
 
 export default function Support() {
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
   const [formData, setFormData] = useState({
     name: "",
     email: "",

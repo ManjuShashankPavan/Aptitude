@@ -1,7 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useEffect } from 'react';
+
 
 export default function ContactUs() {
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+    
   return (
     <div className="p-8 max-w-2xl mx-auto shadow-xl bg-gray-100 rounded-lg mt-20">
       <h1 className="text-3xl font-bold text-left text-gray-900">Contact Us</h1>

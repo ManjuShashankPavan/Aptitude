@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
+import { useEffect } from 'react';
+
 
 export default function FAQ() {
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
   const [openIndex, setOpenIndex] = useState(null);
 
   const faqs = [

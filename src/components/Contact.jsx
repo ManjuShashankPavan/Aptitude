@@ -1,6 +1,12 @@
 import React from "react";
+import { useEffect } from 'react';
+
 
 export default function Contact() {
+  useEffect(() => {
+      window.scrollTo(0, 0);
+    }, []);
+    
   return (
     <div className="p-10 max-w-10xl mx-auto border shadow-lg mt-16 bg-slate-200">
       <h1 className="text-3xl font-bold text-green-600">Send Message</h1>
