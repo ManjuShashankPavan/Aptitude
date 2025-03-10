@@ -35,7 +35,7 @@ export default function SignUpPopup({ setShowSignIn, setShowSignUp }) {
       password: form.password,
       options: {
         data: {
-          firstName: form.firstName,
+          firstName: form.firstName,  
           lastName: form.lastName,
           avatar_url: "https://via.placeholder.com/150", // Default avatar URL
         },

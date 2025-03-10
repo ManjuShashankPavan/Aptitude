@@ -7,30 +7,37 @@ export default function Navbar({ setShowSignIn, setShowSignUp, triggerResumeUplo
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  const [avatarError, setAvatarError] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        setUser({
-          email: user.email,
-          firstName: user.user_metadata?.firstName || "User",
-          lastName: user.user_metadata?.lastName || "",
-          avatar: user.user_metadata?.avatar_url || "https://via.placeholder.com/40",
-        });
+        const email = user.email;
+        const firstName = user.user_metadata?.firstName || "User";
+        const lastName = user.user_metadata?.lastName || "";
+        const supabaseAvatar = user.user_metadata?.avatar_url || null;
+        const gmailAvatar = `https://lh3.googleusercontent.com/a-/AOh14Gg${email} `; // check
+        console.warn(supabaseAvatar, " : ",gmailAvatar);
+        // Test if Gmail profile pic loads, otherwise use Supabase avatar
+        checkImageExists(gmailAvatar)
+          .then(() => setUser({ email, firstName, lastName, avatar: gmailAvatar }))
+          .catch(() => {
+            if (supabaseAvatar) {
+              setUser({ email, firstName, lastName, avatar: supabaseAvatar });
+            } else {
+              setUser({ email, firstName, lastName, avatar: supabaseAvatar });
+              // setUser({ email, firstName, lastName, avatar: getPlaceholderAvatar(email) });
+            }
+          });
       }
     };
 
     fetchUser();
 
-    const { data: listener } = supabase.auth.onAuthStateChange((_, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
-        setUser({
-          email: session.user.email,
-          firstName: session.user.user_metadata?.firstName || "User",
-          lastName: session.user.user_metadata?.lastName || "",
-          avatar: session.user.user_metadata?.avatar_url || "https://via.placeholder.com/40",
-        });
+        fetchUser();
       } else {
         setUser(null);
       }
@@ -47,7 +54,8 @@ export default function Navbar({ setShowSignIn, setShowSignUp, triggerResumeUplo
     navigate("/");
   };
 
-  const handleDashboardClick = () => {
+  const handleDashboardClick = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       navigate("/dashboard");
     } else {
@@ -65,6 +73,19 @@ export default function Navbar({ setShowSignIn, setShowSignUp, triggerResumeUplo
       console.log("Resume uploaded:", file.name);
       triggerResumeUpload(file);
     }
+  };
+
+  const getPlaceholderAvatar = (email) => {
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(email)}&background=random`;
+  };
+
+  const checkImageExists = (url) => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+      img.onload = () => resolve(true);
+      img.onerror = () => reject(false);
+    });
   };
 
   return (
@@ -90,13 +111,16 @@ export default function Navbar({ setShowSignIn, setShowSignUp, triggerResumeUplo
             </button>
           </li>
 
+          {/* Conditional Rendering for Authenticated User */}
           {user ? (
             <div className="relative">
               <img
-                src={user.avatar}
+                src={ user.avatar}
                 alt="Profile"
                 className="w-10 h-10 rounded-full cursor-pointer border-2 border-white"
-                onClick={() => setShowDropdown(!showDropdown)}
+                loading="lazy"
+                onError={() => setAvatarError(true)}
+                onClick={() => setShowDropdown((prev) => !prev)}
               />
               {showDropdown && (
                 <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg p-2">
@@ -121,6 +145,7 @@ export default function Navbar({ setShowSignIn, setShowSignUp, triggerResumeUplo
               )}
             </div>
           ) : (
+            // This button ONLY appears if the user is NOT logged in
             <li>
               <button
                 onClick={() => setShowSignIn(true)}

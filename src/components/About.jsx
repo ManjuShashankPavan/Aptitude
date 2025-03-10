@@ -1,6 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 export default function About() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   return (
     <div className="flex flex-col flex-grow items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6 mt-10">
       <div className="max-w-3xl bg-white text-gray-900 p-8 rounded-2xl shadow-lg mt-16">
