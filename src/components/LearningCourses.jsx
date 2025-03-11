@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import SummaryAd from "../components/SummaryAd";
+
 
 const LearningCourses = () => {
   const navigate = useNavigate(); // Initialize navigation
@@ -20,11 +20,6 @@ const LearningCourses = () => {
       <p className="text-gray-600 mt-2 text-center">
         Enhance your skills with our structured learning courses
       </p>
-
-      {/* SummaryAd Component */}
-      <div className="mt-6 w-full max-w-4xl px-4">
-        <SummaryAd />
-      </div>
 
       {/* Card Container */}
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 px-4 md:px-0">

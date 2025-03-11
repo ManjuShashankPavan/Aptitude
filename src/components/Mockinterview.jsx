@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
-import SummaryAd from "../components/SummaryAd";
+
 
 const MockInterview = () => {
   const navigate = useNavigate(); // Initialize navigation
@@ -20,11 +20,6 @@ const MockInterview = () => {
       <p className="text-gray-600 mt-2 text-center">
         Prepare effectively for your interviews with structured mock tests
       </p>
-
-      {/* SummaryAd Component */}
-      <div className="mt-6 w-full max-w-4xl px-4">
-        <SummaryAd />
-      </div>
 
       {/* Card Container */}
       <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 px-4 md:px-0">

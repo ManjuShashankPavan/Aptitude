@@ -1,4 +1,4 @@
-import SummaryAd from "../components/SummaryAd";
+
 
 const Certificate = () => {
   return (
@@ -9,11 +9,7 @@ const Certificate = () => {
         Earn a verifiable certificate upon successfully completing your courses.
       </p>
 
-      {/* SummaryAd Component */}
-      <div className="mt-6 w-full max-w-4xl px-4">
-        <SummaryAd />
-      </div>
-
+      
       {/* Certificate Box */}
       <div className="mt-16 bg-white shadow-lg rounded-xl p-6 flex flex-col items-center text-center w-full max-w-md">
         <img src="/CertificateIcon.jpg" alt="Certificate Icon" className="w-16 h-16" />
