@@ -1,121 +1,163 @@
 import { useState } from "react";
-import { supabase } from "../lib/supabase";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-export default function SignInPopup({ setShowSignIn, setShowSignUp }) {
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [showPassword, setShowPassword] = useState(false);
+const SignInPopup = ({ setShowSignIn, setShowSignUp }) => {
+  const { signIn, signInWithGoogle, signInWithGitHub, resetPassword } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [resetMode, setResetMode] = useState(false);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSignIn = async () => {
+  const handleSignIn = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     setError("");
-    const { error } = await supabase.auth.signInWithPassword({
-      email: form.email,
-      password: form.password,
-    });
 
-    if (error?.message.includes("Email not confirmed")) {
-      alert("Please verify your email before logging in.");
-    } else if (error) {
-      setError(error.message);
-    } else {
-      window.location.reload();
+    if (!email) {
+      setError("Email is required!");
+      setLoading(false);
+      return;
     }
+
+    if (resetMode) {
+      // ✅ Forgot Password
+      const errorMessage = await resetPassword(email);
+      if (errorMessage) {
+        setError(errorMessage);
+      } else {
+        setError("Password reset link sent to your email.");
+        setTimeout(() => setResetMode(false), 3000); // Auto-switch back to sign-in
+      }
+      setLoading(false);
+      return;
+    }
+
+    // ✅ Normal Sign In
+    const errorMessage = await signIn(email, password);
+    if (errorMessage) {
+      setError(errorMessage);
+    } else {
+      setShowSignIn(false);
+      navigate("/dashboard");
+    }
+
+    setLoading(false);
   };
 
   const handleGoogleSignIn = async () => {
-    await supabase.auth.signInWithOAuth({ provider: "google" });
+    setLoading(true);
+    setError("");
+    const errorMessage = await signInWithGoogle();
+    if (errorMessage) setError(errorMessage);
+    setLoading(false);
   };
 
   const handleGitHubSignIn = async () => {
-    await supabase.auth.signInWithOAuth({ provider: "github" });
-  };
-
-  const handleClose = () => {
-    setShowSignIn(false);
-    setShowSignUp(false);
+    setLoading(true);
+    setError("");
+    const errorMessage = await signInWithGitHub();
+    if (errorMessage) setError(errorMessage);
+    setLoading(false);
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-        <h2 className="text-2xl font-medium mb-4 text-center">Sign In For AI Triney</h2>
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+        <h2 className="text-2xl font-bold text-center">
+          {resetMode ? "Reset Password" : "Sign In"}
+        </h2>
+        {error && <p className="text-red-500 text-center">{error}</p>}
 
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          className="w-full p-3 border rounded-lg mb-3"
-          value={form.email}
-          onChange={handleChange}
-        />
+        <form onSubmit={handleSignIn} className="mt-4">
+          <div className="mb-4">
+            <label className="block text-gray-700">Email Address</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-2 border rounded-lg"
+              required
+            />
+          </div>
 
-        <div className="relative">
-          <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            placeholder="Password"
-            className="w-full p-3 border rounded-lg mb-3 pr-10"
-            value={form.password}
-            onChange={handleChange}
-          />
+          {!resetMode && (
+            <div className="mb-4">
+              <label className="block text-gray-700">Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-2 border rounded-lg"
+                required
+              />
+            </div>
+          )}
+
           <button
-            type="button"
-            className="absolute right-3 top-3 text-gray-500"
-            onClick={() => setShowPassword(!showPassword)}
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition disabled:bg-gray-400"
           >
-            {showPassword ? "🙈" : "👁"}
+            {loading ? "Processing..." : resetMode ? "Send Reset Link" : "Sign In"}
           </button>
-        </div>
+        </form>
 
-        {error && <p className="text-red-500 text-center mb-2">{error}</p>}
+        {!resetMode && (
+          <>
+            <button
+              onClick={handleGoogleSignIn}
+              className="w-full bg-red-500 text-white px-4 py-2 rounded-lg mt-2"
+            >
+              Sign in with Google
+            </button>
+            <button
+              onClick={handleGitHubSignIn}
+              className="w-full bg-gray-800 text-white px-4 py-2 rounded-lg mt-2"
+            >
+              Sign in with GitHub
+            </button>
+          </>
+        )}
 
-        <button
-          onClick={handleSignIn}
-          className="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition"
-        >
-          Login
-        </button>
+        <p className="mt-4 text-center">
+          {resetMode ? (
+            <span
+              onClick={() => setResetMode(false)}
+              className="text-blue-600 cursor-pointer"
+            >
+              Back to Sign In
+            </span>
+          ) : (
+            <>
+              Forgot password?{" "}
+              <span
+                onClick={() => setResetMode(true)}
+                className="text-blue-600 cursor-pointer"
+              >
+                Reset here
+              </span>
+            </>
+          )}
+        </p>
 
-        <div className="flex gap-2 mt-2">
-        <button
-          onClick={handleGoogleSignIn}
-          className="w-full bg-red-500 text-white p-2 rounded mt-2"
-        >
-          Sign In with Google
-        </button>
-
-        <button
-          onClick={handleGitHubSignIn}
-          className="w-full bg-gray-900 text-white p-2 rounded mt-2"
-        >
-          Sign In with GitHub
-        </button>
-        </div>
-
-        <p className="text-center text-sm text-gray-600 mt-3">
+        <p className="mt-2 text-center">
           Don't have an account?{" "}
           <span
             onClick={() => {
               setShowSignIn(false);
               setShowSignUp(true);
             }}
-            className="text-green-500 cursor-pointer hover:underline"
+            className="text-blue-600 cursor-pointer"
           >
-            Create an account
+            Sign up here
           </span>
         </p>
-
-        <button
-          onClick={handleClose}
-          className="w-full mt-3 text-gray-500 hover:text-gray-700"
-        >
-          Close
-        </button>
       </div>
     </div>
   );
-}
+};
+
+export default SignInPopup;

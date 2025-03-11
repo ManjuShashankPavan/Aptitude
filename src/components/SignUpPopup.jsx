@@ -17,35 +17,59 @@ export default function SignUpPopup({ setShowSignIn, setShowSignUp }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const validatePassword = (password) => {
+    if (password.length < 8) {
+      return "Password should be at least 8 characters long.";
+    }
+    const regex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!regex.test(password)) {
+      return "Password must include at least one letter, one number, and one special character.";
+    }
+    return null;
+  };
+
   const handleSignUp = async () => {
     setError("");
+
     if (!form.firstName || !form.lastName) {
-      setError("First name and last name are required");
+      setError("First name and last name are required.");
       return;
     }
+
     if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match");
+      setError("Passwords do not match.");
+      return;
+    }
+
+    const passwordError = validatePassword(form.password);
+    if (passwordError) {
+      setError(passwordError);
       return;
     }
 
     setLoading(true);
 
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: form.email,
       password: form.password,
       options: {
         data: {
-          firstName: form.firstName,  
+          firstName: form.firstName,
           lastName: form.lastName,
-          avatar_url: "https://via.placeholder.com/150", // Default avatar URL
+          avatar_url: "https://via.placeholder.com/150",
         },
       },
     });
 
     setLoading(false);
 
-    if (error) setError(error.message);
-    else alert("Check your email to verify your account!");
+    if (error) {
+      setError(error.message);
+    } else {
+      alert("Check your email to verify your account!");
+      setShowSignUp(false);
+      setShowSignIn(true);
+    }
   };
 
   const handleClose = () => {
