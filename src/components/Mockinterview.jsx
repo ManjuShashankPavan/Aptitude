@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
+import AptitudeQuiz from "./AptitudeQuiz";
 
 
 const MockInterview = () => {
@@ -22,14 +23,14 @@ const MockInterview = () => {
       </p>
 
       {/* Card Container */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 px-4 md:px-0">
+      <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 px-4 md:px-0">
         {/* Aptitude Test Card */}
         <div 
           className="bg-white shadow-lg rounded-xl p-6 flex flex-col items-center text-center hover:bg-slate-100 relative group cursor-pointer"
-          onClick={() => navigate("/AptitudeTest")} // Navigate to Aptitude Test
+          onClick={() => navigate("/Rounds")} // Navigate to Aptitude Test
         >
           <img src="/AptitudeIcon.jpg" alt="Aptitude Test" className="w-12 h-12" />
-          <h2 className="text-lg font-semibold mt-4">Aptitude Test</h2>
+          <h2 className="text-lg font-semibold mt-4"> Aptitude Test</h2>
           <p className="text-gray-600 mt-2">
             Sharpen your problem-solving skills with aptitude tests
           </p>

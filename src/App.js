@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"; // ✅ Added Navigate
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { supabase } from "./lib/supabase";
 import Navbar from "./components/Navbar";
 import SignInPopup from "./components/SignInPopup";
@@ -9,8 +9,10 @@ import ResumeUpload from "./components/ResumeUpload";
 import IntroPage from "./pages/IntroPage";
 import ContactUs from "./components/ContactUs";
 import Contact from "./components/Contact";
-import About from "./components/About";
 import FAQs from "./components/FAQs";
+import About from "./components/About";
+import AptitudeQuiz from "./components/AptitudeQuiz"; // ✅ Ensure dynamic round selection works
+import Rounds from "./components/Rounds";
 import TandP from "./components/TandP";
 import Support from "./components/Support";
 import Careers from "./components/Careers";
@@ -23,7 +25,7 @@ export default function App() {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ Added loading state
+  const [loading, setLoading] = useState(true); // ✅ Loading state for auth check
   const resumeUploadRef = useRef(null);
 
   useEffect(() => {
@@ -40,12 +42,12 @@ export default function App() {
     });
 
     return () => {
-      listener.subscription?.unsubscribe(); // ✅ Fix: Ensure proper cleanup
+      listener.subscription?.unsubscribe(); // ✅ Ensure proper cleanup
     };
   }, []);
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>; // ✅ Show a loading state while checking auth
+    return <div className="flex items-center justify-center h-screen">Loading...</div>; // ✅ Show loading while checking auth
   }
 
   return (
@@ -73,6 +75,10 @@ export default function App() {
             <Route path="/Mockinterview" element={<Mockinterview />} />
             <Route path="/Certificate" element={<Certificate />} />
             <Route path="/LearningCourses" element={<LearningCourses />} />
+            <Route path="/Rounds" element={<Rounds />} />
+
+            {/* ✅ Dynamic Route for Aptitude Quiz Rounds */}
+            <Route path="/AptitudeQuiz/:round" element={<AptitudeQuiz />} />
 
             {/* ✅ Protected Routes */}
             <Route 

@@ -7,6 +7,7 @@ const SignInPopup = ({ setShowSignIn, setShowSignUp }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const [resetMode, setResetMode] = useState(false);
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ const SignInPopup = ({ setShowSignIn, setShowSignUp }) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccessMessage("");
 
     if (!email) {
       setError("Email is required!");
@@ -23,19 +25,17 @@ const SignInPopup = ({ setShowSignIn, setShowSignUp }) => {
     }
 
     if (resetMode) {
-      // ✅ Forgot Password
-      const errorMessage = await resetPassword(email);
-      if (errorMessage) {
+      try {
+        await resetPassword(email);
+        setSuccessMessage("✅ Password reset link sent to your email.");
+        setEmail("");
+      } catch (errorMessage) {
         setError(errorMessage);
-      } else {
-        setError("Password reset link sent to your email.");
-        setTimeout(() => setResetMode(false), 3000); // Auto-switch back to sign-in
       }
       setLoading(false);
       return;
     }
 
-    // ✅ Normal Sign In
     const errorMessage = await signIn(email, password);
     if (errorMessage) {
       setError(errorMessage);
@@ -65,11 +65,20 @@ const SignInPopup = ({ setShowSignIn, setShowSignUp }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
+        <button
+          onClick={() => setShowSignIn(false)}
+          className="absolute top-3 right-3 text-gray-700 hover:text-gray-900 text-lg"
+        >
+          ✕
+        </button>
+
         <h2 className="text-2xl font-bold text-center">
           {resetMode ? "Reset Password" : "Sign In"}
         </h2>
+
         {error && <p className="text-red-500 text-center">{error}</p>}
+        {successMessage && <p className="text-green-500 text-center">{successMessage}</p>}
 
         <form onSubmit={handleSignIn} className="mt-4">
           <div className="mb-4">
@@ -84,7 +93,7 @@ const SignInPopup = ({ setShowSignIn, setShowSignUp }) => {
           </div>
 
           {!resetMode && (
-            <div className="mb-4">
+            <div className="mb-2">
               <label className="block text-gray-700">Password</label>
               <input
                 type="password"
@@ -94,7 +103,32 @@ const SignInPopup = ({ setShowSignIn, setShowSignUp }) => {
                 required
               />
             </div>
+            
           )}
+          <p className=" mb-2 text-center">
+          {resetMode ? (
+            <span
+              onClick={() => setResetMode(false)}
+              className="text-blue-600 cursor-pointer "
+            >
+              Back to Sign In
+            </span>
+          ) : (
+            <>
+              Forgot password?{" "}
+              <span
+                onClick={() => {
+                  setResetMode(true);
+                  setError("");
+                  setSuccessMessage("");
+                }}
+                className="text-blue-600 cursor-pointer hover:underline"
+              >
+                Reset here
+              </span>
+            </>
+          )}
+        </p>
 
           <button
             type="submit"
@@ -106,42 +140,23 @@ const SignInPopup = ({ setShowSignIn, setShowSignUp }) => {
         </form>
 
         {!resetMode && (
-          <>
+          <div className="flex gap-2 mt-2">
             <button
               onClick={handleGoogleSignIn}
-              className="w-full bg-red-500 text-white px-4 py-2 rounded-lg mt-2"
+              className="flex-1 bg-red-500 text-white px-4 py-2 rounded-lg text-center"
             >
               Sign in with Google
             </button>
             <button
               onClick={handleGitHubSignIn}
-              className="w-full bg-gray-800 text-white px-4 py-2 rounded-lg mt-2"
+              className="flex-1 bg-gray-800 text-white px-4 py-2 rounded-lg text-center"
             >
               Sign in with GitHub
             </button>
-          </>
+          </div>
         )}
 
-        <p className="mt-4 text-center">
-          {resetMode ? (
-            <span
-              onClick={() => setResetMode(false)}
-              className="text-blue-600 cursor-pointer"
-            >
-              Back to Sign In
-            </span>
-          ) : (
-            <>
-              Forgot password?{" "}
-              <span
-                onClick={() => setResetMode(true)}
-                className="text-blue-600 cursor-pointer"
-              >
-                Reset here
-              </span>
-            </>
-          )}
-        </p>
+        
 
         <p className="mt-2 text-center">
           Don't have an account?{" "}
@@ -150,7 +165,7 @@ const SignInPopup = ({ setShowSignIn, setShowSignUp }) => {
               setShowSignIn(false);
               setShowSignUp(true);
             }}
-            className="text-blue-600 cursor-pointer"
+            className="text-blue-600 cursor-pointer hover:underline"
           >
             Sign up here
           </span>
