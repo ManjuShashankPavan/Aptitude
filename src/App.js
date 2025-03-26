@@ -18,16 +18,18 @@ import Careers from "./components/Careers";
 import Mockinterview from "./components/Mockinterview";
 import Certificate from "./components/Certificate";
 import LearningCourses from "./components/LearningCourses";
-import Beging from "./Aptitude/Beging";
+import Basic from "./Aptitude/Basic.jsx";
 import Intermediate from "./Aptitude/Intermediate";
 import Advance from "./Aptitude/Advance";
 import Footer from "./components/Footer";
+import AptitudeHome from "./Aptitude/AptitudeHome"; // New component for level selection
+import AptitudeLevelTest from "./Aptitude/AptitudeLevelTest"; // New component for the actual test
 
 export default function App() {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true); // ✅ Loading state for auth check
+  const [loading, setLoading] = useState(true);
   const resumeUploadRef = useRef(null);
 
   useEffect(() => {
@@ -44,28 +46,26 @@ export default function App() {
     });
 
     return () => {
-      listener.subscription?.unsubscribe(); // ✅ Ensure proper cleanup
+      listener.subscription?.unsubscribe();
     };
   }, []);
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>; // ✅ Show loading while checking auth
+    return <div className="flex items-center justify-center h-screen">Loading...</div>;
   }
 
   return (
     <Router>
       <div className="flex flex-col min-h-screen">
-        {/* ✅ Navbar */}
         <Navbar 
           setShowSignIn={setShowSignIn} 
           setShowSignUp={setShowSignUp}
           triggerResumeUpload={() => resumeUploadRef.current?.()} 
         />
 
-        {/* ✅ Main content */}
         <div className="flex-grow flex flex-col">
           <Routes>
-            {/* ✅ Public Routes */}
+            /* Public Routes */
             <Route path="/" element={<IntroPage setShowSignIn={setShowSignIn} />} />
             <Route path="/ContactUs" element={<ContactUs />} />
             <Route path="/Contact" element={<Contact />} />
@@ -77,12 +77,18 @@ export default function App() {
             <Route path="/Mockinterview" element={<Mockinterview />} />
             <Route path="/Certificate" element={<Certificate />} />
             <Route path="/LearningCourses" element={<LearningCourses />} />
-            <Route path="/AptitudeTest" element={<AptitudeTest />} />
-            <Route path="/Beging" element={<Beging />} />
-            <Route path="/Intermediate" element={<Intermediate />} />
-            <Route path="/Advance" element={<Advance />} />
+            
+            /* Updated Aptitude Test Routes */
+            <Route path="/aptitude-test" element={<AptitudeHome />} />
+            <Route path="/aptitude-test/:level" element={<AptitudeLevelTest />} />
+            
+            /* Legacy routes (keep for backward compatibility if needed) */
+            <Route path="/AptitudeTest" element={<Navigate to="/aptitude-test" replace />} />
+            <Route path="/Basic" element={<Navigate to="/aptitude-test/Basic" replace />} />
+            <Route path="/Intermediate" element={<Navigate to="/aptitude-test/intermediate" replace />} />
+            <Route path="/Advance" element={<Navigate to="/aptitude-test/advanced" replace />} />
 
-            {/* ✅ Protected Routes */}
+            /* Protected Routes */
             <Route 
               path="/dashboard" 
               element={user ? <Dashboard /> : <Navigate to="/" />} 
@@ -94,10 +100,9 @@ export default function App() {
           </Routes>
         </div>
 
-        {/* ✅ Footer */}
         <Footer />
 
-        {/* ✅ Authentication Popups */}
+        /* Authentication Popups */
         {showSignIn && (
           <SignInPopup setShowSignIn={setShowSignIn} setShowSignUp={setShowSignUp} />
         )}
@@ -107,4 +112,4 @@ export default function App() {
       </div>
     </Router>
   );
-}
+};
