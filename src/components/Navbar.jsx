@@ -98,14 +98,14 @@ export default function Navbar({ setShowSignIn, setShowSignUp, triggerResumeUplo
         {/* Navigation Links */}
         <ul className="flex space-x-6 items-center">
           <li>
-            <Link to="/" className="text-white hover:underline">Home</Link>
+            <Link to="/" className="text-white hover:text-gray-300 ">Home</Link>
           </li>
 
           {/* Dashboard Button */}
           <li>
             <button
               onClick={handleDashboardClick}
-              className="text-white hover:underline"
+              className="text-white  hover:text-gray-300"
             >
               Dashboard
             </button>

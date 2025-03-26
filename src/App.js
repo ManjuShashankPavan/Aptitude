@@ -11,14 +11,16 @@ import ContactUs from "./components/ContactUs";
 import Contact from "./components/Contact";
 import FAQs from "./components/FAQs";
 import About from "./components/About";
-import AptitudeQuiz from "./components/AptitudeQuiz"; // ✅ Ensure dynamic round selection works
-import Rounds from "./components/Rounds";
+import AptitudeTest from "./Aptitude/AptitudeTest";
 import TandP from "./components/TandP";
 import Support from "./components/Support";
 import Careers from "./components/Careers";
 import Mockinterview from "./components/Mockinterview";
 import Certificate from "./components/Certificate";
 import LearningCourses from "./components/LearningCourses";
+import Beging from "./Aptitude/Beging";
+import Intermediate from "./Aptitude/Intermediate";
+import Advance from "./Aptitude/Advance";
 import Footer from "./components/Footer";
 
 export default function App() {
@@ -75,10 +77,10 @@ export default function App() {
             <Route path="/Mockinterview" element={<Mockinterview />} />
             <Route path="/Certificate" element={<Certificate />} />
             <Route path="/LearningCourses" element={<LearningCourses />} />
-            <Route path="/Rounds" element={<Rounds />} />
-
-            {/* ✅ Dynamic Route for Aptitude Quiz Rounds */}
-            <Route path="/AptitudeQuiz/:round" element={<AptitudeQuiz />} />
+            <Route path="/AptitudeTest" element={<AptitudeTest />} />
+            <Route path="/Beging" element={<Beging />} />
+            <Route path="/Intermediate" element={<Intermediate />} />
+            <Route path="/Advance" element={<Advance />} />
 
             {/* ✅ Protected Routes */}
             <Route 
